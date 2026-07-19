@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>咒术回战：咒力交织</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- 全局装饰层 -->
+  <div class="global-decor">
+    <div class="curse-mark curse-mark-1"></div>
+    <div class="curse-mark curse-mark-2"></div>
+    <div class="curse-mark curse-mark-3"></div>
+    <div class="curse-mark curse-mark-4"></div>
+    <div class="seal-talisman seal-tl"></div>
+    <div class="seal-talisman seal-tr"></div>
+    <div class="seal-talisman seal-bl"></div>
+    <div class="seal-talisman seal-br"></div>
+    <div class="school-emblem"></div>
+  </div>
+
+  <div id="game-container">
+
+    <!-- ========== 菜单界面 ========== -->
+    <div id="menu-screen" class="screen">
+      <div class="menu-bg"></div>
+      <div class="paper-texture"></div>
+
+      <div class="menu-content">
+        <!-- 标题区域 - 漫画分镜框 -->
+        <div class="manga-panel title-panel">
+          <div class="panel-inner">
+            <h1 class="game-title">
+              <span class="title-main">呪術廻戦</span>
+              <span class="title-main-cn">咒术回战</span>
+              <span class="title-sub">— 咒力交织 —</span>
+            </h1>
+            <p class="title-desc">
+              <span class="title-dot">◆</span>
+              选择你的咒术师，展开领域对决
+              <span class="title-dot">◆</span>
+            </p>
+          </div>
+          <div class="panel-speedlines"></div>
+        </div>
+
+        <!-- 角色选择 - 漫画分镜格 -->
+        <div class="char-select">
+          <div class="char-card manga-panel" data-char-id="yuji">
+            <div class="panel-inner">
+              <div class="char-avatar yuji">
+                <div class="avatar-aura"></div>
+              </div>
+              <div class="char-info">
+                <h3>虎杖悠仁</h3>
+                <span class="char-type">近战强攻</span>
+              </div>
+              <div class="char-stats">
+                <span class="stat-hp">HP 1100</span>
+                <span class="stat-atk">ATK 90</span>
+                <span class="stat-spd">SPD 8</span>
+              </div>
+              <div class="char-seal">虎</div>
+            </div>
+          </div>
+
+          <div class="char-card manga-panel" data-char-id="megumi">
+            <div class="panel-inner">
+              <div class="char-avatar megumi">
+                <div class="avatar-aura"></div>
+              </div>
+              <div class="char-info">
+                <h3>伏黑惠</h3>
+                <span class="char-type">召唤拉扯</span>
+              </div>
+              <div class="char-stats">
+                <span class="stat-hp">HP 900</span>
+                <span class="stat-atk">ATK 70</span>
+                <span class="stat-spd">SPD 10</span>
+              </div>
+              <div class="char-seal">影</div>
+            </div>
+          </div>
+
+          <div class="char-card manga-panel" data-char-id="nobara">
+            <div class="panel-inner">
+              <div class="char-avatar nobara">
+                <div class="avatar-aura"></div>
+              </div>
+              <div class="char-info">
+                <h3>钉崎野蔷薇</h3>
+                <span class="char-type">远程术式</span>
+              </div>
+              <div class="char-stats">
+                <span class="stat-hp">HP 850</span>
+                <span class="stat-atk">ATK 80</span>
+                <span class="stat-spd">SPD 7</span>
+              </div>
+              <div class="char-seal">簪</div>
+            </div>
+          </div>
+
+          <div class="char-card manga-panel" data-char-id="gojo">
+            <div class="panel-inner">
+              <div class="char-avatar gojo">
+                <div class="avatar-aura"></div>
+              </div>
+              <div class="char-info">
+                <h3>五条悟</h3>
+                <span class="char-type">全能天花板</span>
+              </div>
+              <div class="char-stats">
+                <span class="stat-hp">HP 1000</span>
+                <span class="stat-atk">ATK 100</span>
+                <span class="stat-spd">SPD 9</span>
+              </div>
+              <div class="char-seal">無</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 开始按钮 -->
+        <button id="start-btn" class="start-btn manga-btn">
+          <span class="btn-text">戦闘開始</span>
+          <span class="btn-sub">SELECT <span id="select-count">0/3</span></span>
+          <span class="btn-mist"></span>
+          <span class="btn-spark"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ========== 战斗界面 ========== -->
+    <div id="fight-screen" class="screen hidden">
+      <canvas id="game-canvas"></canvas>
+      <div id="ready-overlay" class="ready-overlay">
+        <div id="ready-text" class="ready-text">3</div>
+      </div>
+      <div id="battle-start" class="battle-start">戦闘開始</div>
+      <div class="fight-border manga-panel">
+        <div class="fight-border-top"></div>
+        <div class="fight-border-bottom"></div>
+      </div>
+      <div class="controls">
+        <div class="controls-left">
+          <button id="btn-left" class="ctrl-btn dir-btn manga-btn">
+            <span class="arrow-left"></span>
+            <span class="btn-mist"></span>
+          </button>
+          <button id="btn-right" class="ctrl-btn dir-btn manga-btn">
+            <span class="arrow-right"></span>
+            <span class="btn-mist"></span>
+          </button>
+          <button id="btn-jump" class="ctrl-btn jump-btn manga-btn">
+            <span class="arrow-up"></span>
+            <span class="btn-mist"></span>
+          </button>
+        </div>
+        <div class="controls-right">
+          <button id="btn-attack" class="ctrl-btn atk-btn manga-btn">
+            <span>攻</span>
+            <span class="btn-mist"></span>
+          </button>
+          <button id="btn-skill1" class="ctrl-btn skill1-btn manga-btn">
+            <span class="skill-name">術式</span>
+            <span class="skill-cd">-</span>
+            <span class="btn-mist"></span>
+          </button>
+          <button id="btn-skill2" class="ctrl-btn skill2-btn manga-btn">
+            <span class="skill-name">術式</span>
+            <span class="skill-cd">-</span>
+            <span class="btn-mist"></span>
+          </button>
+          <button id="btn-skill3" class="ctrl-btn skill3-btn manga-btn">
+            <span class="skill-name">茈</span>
+            <span class="skill-cd">-</span>
+            <span class="btn-mist"></span>
+            <span class="btn-spark"></span>
+          </button>
+          <button id="btn-dodge" class="ctrl-btn dodge-btn manga-btn">
+            <span>閃</span>
+            <span class="btn-mist"></span>
+          </button>
+          <button id="btn-ultimate" class="ctrl-btn ultimate-btn manga-btn">
+            <span class="skill-name">領域</span>
+            <span class="skill-cd">-</span>
+            <span class="btn-mist"></span>
+            <span class="btn-spark"></span>
+          </button>
+        </div>
+      </div>
+      <div class="key-hints manga-panel">
+        <span>WASD 移動</span>
+        <span class="hint-sep">|</span>
+        <span>J 攻撃</span>
+        <span class="hint-sep">|</span>
+        <span>K/L 術式</span>
+        <span class="hint-sep">|</span>
+        <span>O 茈</span>
+        <span class="hint-sep">|</span>
+        <span>SPACE 閃避</span>
+        <span class="hint-sep">|</span>
+        <span>U 領域</span>
+      </div>
+    </div>
+
+    <!-- ========== 结算界面 ========== -->
+    <div id="result-screen" class="screen hidden">
+      <div class="result-overlay"></div>
+      <div class="paper-texture"></div>
+      <div class="result-content">
+        <div class="manga-panel result-panel">
+          <div class="panel-inner">
+            <h2 id="result-title" class="result-title"></h2>
+            <div id="result-stats" class="result-stats"></div>
+            <div class="result-buttons">
+              <button id="btn-retry" class="result-btn retry-btn manga-btn">
+                <span class="btn-text">再戦</span>
+                <span class="btn-sub">REMATCH</span>
+                <span class="btn-mist"></span>
+              </button>
+              <button id="btn-menu" class="result-btn menu-btn manga-btn">
+                <span class="btn-text">戻る</span>
+                <span class="btn-sub">MENU</span>
+                <span class="btn-mist"></span>
+              </button>
+            </div>
+          </div>
+          <div class="panel-speedlines"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="js/particles.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/characters.js"></script>
+  <script src="js/fighter.js"></script>
+  <script src="js/ai.js"></script>
+  <script src="js/combat.js"></script>
+  <script src="js/canvas.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

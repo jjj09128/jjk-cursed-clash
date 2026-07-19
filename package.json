@@ -1,0 +1,50 @@
+{
+  "name": "jujutsu-kaisen-cursed-clash",
+  "version": "1.0.0",
+  "description": "咒术回战：咒力交织 — 2D 动作格斗游戏",
+  "main": "electron/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build:linux": "electron-builder --linux",
+    "build:mac": "electron-builder --mac",
+    "build:win": "electron-builder --win",
+    "build:all": "electron-builder --linux --mac --win"
+  },
+  "build": {
+    "appId": "com.jujutsu.cursed-clash",
+    "productName": "咒术回战：咒力交织",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "index.html",
+      "css/**/*",
+      "js/**/*",
+      "electron/**/*"
+    ],
+    "linux": {
+      "target": ["AppImage", "deb", "tar.gz"],
+      "category": "Game",
+      "icon": "build/icon.png"
+    },
+    "mac": {
+      "target": ["dmg", "zip"],
+      "category": "public.app-category.games"
+    },
+    "win": {
+      "target": ["nsis", "portable"],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerLanguages": ["zh_CN", "en_US"]
+    }
+  },
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.0"
+  }
+}
