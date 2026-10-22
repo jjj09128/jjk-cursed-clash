@@ -572,12 +572,18 @@ class UIManager {
         if (typeof GAME_MODE !== 'undefined') {
           GAME_MODE = mode;
         }
+        // 在 body 上加 class，让 CSS 能根据模式调整布局
+        document.body.classList.toggle('versus-mode', mode === 'versus');
         // 重置选角状态
         this.p2SelectedCharacters = [];
         this.isP2Selecting = false;
         this._updateSelectingState();
       });
     });
+    // 初始状态也同步 body class
+    if (typeof GAME_MODE !== 'undefined' && GAME_MODE === 'versus') {
+      document.body.classList.add('versus-mode');
+    }
   }
 
   _updateSelectingState() {

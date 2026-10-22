@@ -3790,16 +3790,27 @@ html.device-tablet .menu-content {
   .hud-vs { font-size: 16px; }
   .hud-timer { font-size: 9px; }
 }
-/* ===== 双人模式：模式切换按钮 ===== */
+/* ===== 双人模式：模式切换 + 开始按钮容器 ===== */
 .start-area {
   position: absolute;
-  left: 50%;
-  bottom: 48px;
-  transform: translateX(-50%);
+  left: auto;
+  right: 28px;
+  top: auto;
+  bottom: 12px;
+  transform: none;
+  z-index: 18;
   display: flex;
   align-items: center;
-  gap: 14px;
-  z-index: 50;
+  gap: 12px;
+  width: auto;
+  height: auto;
+}
+
+/* 清除 start-btn 在 start-area 里的旧 absolute 定位，让它在 flex 里正常 flow */
+.start-area .start-btn {
+  position: static !important;
+  bottom: auto !important;
+  right: auto !important;
 }
 
 .mode-switch {
@@ -3809,15 +3820,16 @@ html.device-tablet .menu-content {
   border-radius: 6px;
   overflow: hidden;
   box-shadow: 0 2px 12px rgba(225, 29, 42, 0.2);
+  flex-shrink: 0;
 }
 
 .mode-btn {
-  padding: 8px 18px;
+  padding: 8px 16px;
   background: transparent;
   border: none;
   color: #c9b8b8;
   font-family: 'Noto Serif SC', 'Shippori Mincho', serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   letter-spacing: 1px;
   cursor: pointer;
@@ -3836,18 +3848,27 @@ html.device-tablet .menu-content {
   box-shadow: inset 0 0 12px rgba(255, 180, 180, 0.3);
 }
 
-/* P2 队伍显示条 */
+/* ===== P2 队伍显示条 =====
+   原始 team-order-bar 在 bottom:124px。
+   双人模式下：P1 bar 上移到 bottom:230px，P2 bar 在 bottom:130px，
+   thumb-strip bottom:50px。三者间距计算（任意 viewport 高都成立）：
+     thumb top = viewport - 50 - 60 = viewport - 110
+     P2 bottom = viewport - 130 → 距 thumb top 20px
+     P1 bottom = viewport - 230 → P2 top = viewport - 130 - 92 = viewport - 222
+     P1 bottom(viewport-230) 到 P2 top(viewport-222) 有 8px gap ✓ */
 .team-order-bar.p2-team-order {
   top: auto;
-  bottom: auto;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: 130px;
+  left: 0; right: 0;
+  transform: none;
   border-color: rgba(80, 130, 255, 0.5) !important;
   background: rgba(15, 20, 40, 0.85);
+  padding: 4px 0;
 }
 
 .team-order-bar.p2-team-order .team-order-label {
   color: #6b9aff;
+  font-size: 12px;
 }
 
 .team-order-bar.p2-team-order .team-order-slots {
@@ -3856,6 +3877,8 @@ html.device-tablet .menu-content {
 
 .team-order-slot.p2-slot {
   border-color: rgba(80, 130, 255, 0.35);
+  width: 62px;
+  height: 36px;
 }
 
 .team-order-slot.p2-slot.filled {
@@ -3866,13 +3889,22 @@ html.device-tablet .menu-content {
 
 .team-order-slot.p2-slot .slot-char {
   color: #9bb8ff;
+  font-size: 16px;
 }
 
-/* 双人模式下开始按钮上方提示 */
-#btn-sub-text {
-  display: block;
+.team-order-bar.p2-team-order .team-order-hint {
+  font-size: 10px;
 }
 
+/* 双人模式激活时，P1 team bar 上移给 P2 bar 腾位置 */
+body.versus-mode #team-order-bar {
+  bottom: 230px;
+}
+
+/* 双人模式下隐藏版本号（避免冲突，或移到别处） */
+/* .versus-mode .version-area { display: none; } */
+
+/* P2 选角中，thumb-strip 加高亮 */
 .char-thumb-strip.p2-selecting {
   box-shadow: 0 0 20px rgba(80, 130, 255, 0.5);
 }
@@ -3880,12 +3912,12 @@ html.device-tablet .menu-content {
 .char-thumb-strip.p2-selecting::before {
   content: 'P2 选角中';
   position: absolute;
-  top: -28px;
+  top: -24px;
   left: 50%;
   transform: translateX(-50%);
   color: #6b9aff;
   font-family: 'Noto Serif SC', serif;
-  font-size: 12px;
+  font-size: 11px;
   letter-spacing: 2px;
   white-space: nowrap;
 }
@@ -4024,15 +4056,30 @@ html.device-tablet .menu-content {
   display: none;
 }
 
-/* 移动端适配 */
+/* 移动端适配（小屏）*/
 @media (max-width: 900px) {
   .start-area {
-    flex-direction: column;
-    gap: 8px;
-    bottom: 36px;
+    flex-direction: row;       /* 小屏也保持横排，避免跟 thumb 重叠 */
+    gap: 6px;
+    bottom: 4px;
+    right: 12px;
   }
   .mode-switch {
-    width: 200px;
+    width: auto;
+    flex-shrink: 1;
+  }
+  .mode-btn {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+  .start-area .start-btn {
+    padding: 8px 20px;
+  }
+  .start-area .start-btn .btn-text {
+    font-size: 16px;
+  }
+  .start-area .start-btn .btn-sub {
+    font-size: 8px;
   }
   .p2-hud-panel {
     min-width: 180px;
