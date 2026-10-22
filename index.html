@@ -6,22 +6,29 @@
   <title>咒术回战：咒力交织</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@700;900&family=Zen+Old+Mincho:wght@400;700;900&family=Shippori+Mincho:wght@400;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-  <!-- 全局装饰层 -->
+  <!-- 手机竖屏提示横屏 -->
+  <div class="orientation-hint">
+    <div class="orientation-hint-inner">
+      <div class="orientation-icon">📱↻</div>
+      <p>请横屏游玩</p>
+      <p class="orientation-sub">Rotate your device to landscape</p>
+    </div>
+  </div>
+
+  <!-- 全局装饰层：墨迹溅射 + 网点纹理 -->
   <div class="global-decor">
-    <div class="curse-mark curse-mark-1"></div>
-    <div class="curse-mark curse-mark-2"></div>
-    <div class="curse-mark curse-mark-3"></div>
-    <div class="curse-mark curse-mark-4"></div>
-    <div class="seal-talisman seal-tl"></div>
-    <div class="seal-talisman seal-tr"></div>
-    <div class="seal-talisman seal-bl"></div>
-    <div class="seal-talisman seal-br"></div>
-    <div class="school-emblem"></div>
+    <div class="ink-splatter ink-splatter-1"></div>
+    <div class="ink-splatter ink-splatter-2"></div>
+    <div class="ink-splatter ink-splatter-3"></div>
+    <div class="ink-splatter ink-splatter-4"></div>
+    <div class="halftone-overlay"></div>
+    <div class="brush-stroke brush-stroke-tl"></div>
+    <div class="brush-stroke brush-stroke-br"></div>
   </div>
 
   <div id="game-container">
@@ -30,135 +37,406 @@
     <div id="menu-screen" class="screen">
       <div class="menu-bg"></div>
       <div class="paper-texture"></div>
+      <div class="menu-ink-veil"></div>
 
-      <div class="menu-content">
-        <!-- 标题区域 - 漫画分镜框 -->
-        <div class="manga-panel title-panel">
-          <div class="panel-inner">
-            <h1 class="game-title">
-              <span class="title-main">呪術廻戦</span>
-              <span class="title-main-cn">咒术回战</span>
-              <span class="title-sub">— 咒力交织 —</span>
-            </h1>
-            <p class="title-desc">
-              <span class="title-dot">◆</span>
-              选择你的咒术师，展开领域对决
-              <span class="title-dot">◆</span>
-            </p>
+      <!-- 顶部标题条 -->
+      <div class="menu-top-bar">
+        <div class="title-mini">
+          <span class="title-kanji">呪術廻戦</span>
+          <span class="title-sub">— 咒力交织 —</span>
+        </div>
+        <div class="top-actions">
+          <button id="encyclopedia-btn" class="ghost-btn">
+            <span class="btn-text">圖鑑</span>
+          </button>
+          <button id="changelog-btn" class="ghost-btn">
+            <span class="btn-text">更新公告</span>
+          </button>
+          <button id="settings-btn" class="ghost-btn">
+            <span class="btn-text">設定</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 主区域：左侧立绘 + 右侧浮出面板 -->
+      <div class="menu-stage">
+        <!-- 左侧：全屏角色立绘 -->
+        <div class="char-portrait-area" id="char-portrait-area">
+          <div class="portrait-bg"></div>
+          <div class="portrait-glow"></div>
+          <div class="portrait-figure" id="portrait-figure">
+            <div class="portrait-silhouette"></div>
+            <div class="portrait-breath"></div>
           </div>
-          <div class="panel-speedlines"></div>
+          <!-- 立绘左下大字：角色名 -->
+          <div class="portrait-nameplate">
+            <span class="name-kanji" id="portrait-name-kanji">虎杖悠仁</span>
+            <span class="name-en" id="portrait-name-en">YUJI ITADORI</span>
+            <span class="name-title" id="portrait-name-title">不死暴君・赤血御厨子</span>
+          </div>
+          <!-- 巨大背景汉字 -->
+          <div class="portrait-bg-kanji" id="portrait-bg-kanji">虎</div>
         </div>
 
-        <!-- 角色选择 - 漫画分镜格 -->
-        <div class="char-select">
-          <div class="char-card manga-panel" data-char-id="yuji">
-            <div class="panel-inner">
-              <div class="char-avatar yuji">
-                <div class="avatar-aura"></div>
-              </div>
-              <div class="char-info">
-                <h3>虎杖悠仁</h3>
-                <span class="char-type">近战强攻</span>
-              </div>
-              <div class="char-stats">
-                <span class="stat-hp">HP 1100</span>
-                <span class="stat-atk">ATK 90</span>
-                <span class="stat-spd">SPD 8</span>
-              </div>
-              <div class="char-seal">虎</div>
+        <!-- 右侧：浮出技能/属性面板 -->
+        <div class="char-detail-panel" id="char-detail-panel">
+          <div class="detail-header">
+            <span class="detail-label">術式解析</span>
+            <span class="detail-type" id="detail-type">近战强攻</span>
+          </div>
+
+          <!-- 属性条 -->
+          <div class="stat-bars" id="stat-bars">
+            <div class="stat-bar">
+              <span class="stat-name">HP</span>
+              <div class="stat-track"><div class="stat-fill stat-hp" data-val="0.9"></div></div>
+              <span class="stat-val" id="stat-hp-val">1500</span>
+            </div>
+            <div class="stat-bar">
+              <span class="stat-name">ATK</span>
+              <div class="stat-track"><div class="stat-fill stat-atk" data-val="0.9"></div></div>
+              <span class="stat-val" id="stat-atk-val">110</span>
+            </div>
+            <div class="stat-bar">
+              <span class="stat-name">SPD</span>
+              <div class="stat-track"><div class="stat-fill stat-spd" data-val="0.8"></div></div>
+              <span class="stat-val" id="stat-spd-val">9</span>
+            </div>
+            <div class="stat-bar">
+              <span class="stat-name">咒力</span>
+              <div class="stat-track"><div class="stat-fill stat-ce" data-val="0.95"></div></div>
+              <span class="stat-val" id="stat-ce-val">150</span>
             </div>
           </div>
 
-          <div class="char-card manga-panel" data-char-id="megumi">
-            <div class="panel-inner">
-              <div class="char-avatar megumi">
-                <div class="avatar-aura"></div>
-              </div>
-              <div class="char-info">
-                <h3>伏黑惠</h3>
-                <span class="char-type">召唤拉扯</span>
-              </div>
-              <div class="char-stats">
-                <span class="stat-hp">HP 900</span>
-                <span class="stat-atk">ATK 70</span>
-                <span class="stat-spd">SPD 10</span>
-              </div>
-              <div class="char-seal">影</div>
-            </div>
+          <!-- 技能列表 -->
+          <div class="skill-list" id="skill-list">
+            <!-- JS 动态填充 -->
           </div>
 
-          <div class="char-card manga-panel" data-char-id="nobara">
-            <div class="panel-inner">
-              <div class="char-avatar nobara">
-                <div class="avatar-aura"></div>
-              </div>
-              <div class="char-info">
-                <h3>钉崎野蔷薇</h3>
-                <span class="char-type">远程术式</span>
-              </div>
-              <div class="char-stats">
-                <span class="stat-hp">HP 850</span>
-                <span class="stat-atk">ATK 80</span>
-                <span class="stat-spd">SPD 7</span>
-              </div>
-              <div class="char-seal">簪</div>
-            </div>
-          </div>
-
-          <div class="char-card manga-panel" data-char-id="gojo">
-            <div class="panel-inner">
-              <div class="char-avatar gojo">
-                <div class="avatar-aura"></div>
-              </div>
-              <div class="char-info">
-                <h3>五条悟</h3>
-                <span class="char-type">全能天花板</span>
-              </div>
-              <div class="char-stats">
-                <span class="stat-hp">HP 1000</span>
-                <span class="stat-atk">ATK 100</span>
-                <span class="stat-spd">SPD 9</span>
-              </div>
-              <div class="char-seal">無</div>
-            </div>
+          <!-- 领域展示 -->
+          <div class="domain-preview" id="domain-preview">
+            <span class="domain-label">領域</span>
+            <span class="domain-name" id="domain-name">血厨御殿</span>
           </div>
         </div>
+      </div>
 
-        <!-- 开始按钮 -->
-        <button id="start-btn" class="start-btn manga-btn">
+      <!-- 登场顺序条 -->
+      <div class="team-order-bar" id="team-order-bar">
+        <span class="team-order-label">登场顺序</span>
+        <div class="team-order-slots" id="team-order-slots">
+          <div class="team-order-slot" data-slot="0"><span class="order-num">1st</span></div>
+          <div class="team-order-slot" data-slot="1"><span class="order-num">2nd</span></div>
+          <div class="team-order-slot" data-slot="2"><span class="order-num">3rd</span></div>
+        </div>
+        <span class="team-order-hint">点击已选角色可取消，重新选择以调整顺序</span>
+      </div>
+
+      <!-- P2 队伍显示（双人模式下显示） -->
+      <div class="team-order-bar p2-team-order hidden" id="p2-team-order-bar">
+        <span class="team-order-label p2-label">P2 登场顺序</span>
+        <div class="team-order-slots" id="p2-team-order-slots">
+          <div class="team-order-slot p2-slot" data-p2-slot="0"><span class="order-num">1st</span></div>
+          <div class="team-order-slot p2-slot" data-p2-slot="1"><span class="order-num">2nd</span></div>
+          <div class="team-order-slot p2-slot" data-p2-slot="2"><span class="order-num">3rd</span></div>
+        </div>
+        <span class="team-order-hint">P1 选完 3 人后，点击角色缩略图为 P2 选角</span>
+      </div>
+
+      <!-- 底部：角色切换缩略图横排 -->
+      <div class="char-thumb-strip">
+        <div class="thumb-strip-inner" id="thumb-strip-inner">
+          <!-- JS 动态生成 -->
+        </div>
+        <div class="thumb-strip-deco-left"></div>
+        <div class="thumb-strip-deco-right"></div>
+      </div>
+
+      <!-- 模式切换 + 开始按钮 -->
+      <div class="start-area">
+        <div class="mode-switch" id="mode-switch">
+          <button class="mode-btn active" data-mode="single">VS AI</button>
+          <button class="mode-btn" data-mode="versus">1v1 对战</button>
+        </div>
+        <button id="start-btn" class="start-btn ink-btn">
           <span class="btn-text">戦闘開始</span>
-          <span class="btn-sub">SELECT <span id="select-count">0/3</span></span>
+          <span class="btn-sub" id="btn-sub-text">SELECT <span id="select-count">0/3</span></span>
           <span class="btn-mist"></span>
           <span class="btn-spark"></span>
         </button>
+      </div>
+
+      <!-- 版本号 -->
+      <div class="version-area">
+        <span class="version-number">v1.16.0</span>
+      </div>
+    </div>
+
+    <!-- ========== 更新公告弹窗 ========== -->
+    <div id="changelog-modal" class="changelog-modal hidden">
+      <div class="changelog-overlay"></div>
+      <div class="changelog-panel manga-panel">
+        <div class="panel-inner">
+          <div class="changelog-header">
+            <h2>更新公告</h2>
+            <span class="changelog-head-ver">v1.16.0</span>
+            <button id="changelog-close" class="changelog-close">✕</button>
+          </div>
+          <div id="changelog-list" class="changelog-list">
+            <!-- JS 动态填充 -->
+          </div>
+        </div>
+        <div class="panel-speedlines"></div>
+      </div>
+    </div>
+
+    <!-- ========== 角色台词显示 ========== -->
+    <div id="cast-text-overlay" class="cast-text-overlay"></div>
+
+    <!-- ========== 设置面板 ========== -->
+    <div id="settings-modal" class="settings-modal hidden">
+      <div class="settings-overlay"></div>
+      <div class="settings-panel manga-panel">
+        <div class="panel-inner">
+          <div class="settings-header">
+            <h2>設定</h2>
+            <button id="settings-close" class="changelog-close">✕</button>
+          </div>
+          <div class="settings-body">
+            <!-- 音量设置 -->
+            <div class="settings-section">
+              <h3 class="settings-section-title">音效設置</h3>
+              <div class="settings-row">
+                <label>主音量</label>
+                <input type="range" id="vol-master" min="0" max="100" value="30">
+                <span class="settings-val" id="vol-master-val">30%</span>
+              </div>
+              <div class="settings-row">
+                <label>背景音樂</label>
+                <input type="range" id="vol-bgm" min="0" max="100" value="15">
+                <span class="settings-val" id="vol-bgm-val">15%</span>
+              </div>
+            </div>
+
+            <!-- 画质设置 -->
+            <div class="settings-section">
+              <h3 class="settings-section-title">畫質設置</h3>
+              <div class="settings-row">
+                <label>畫質檔位</label>
+                <select id="quality-select" class="quality-select">
+                  <option value="low">低（流暢）</option>
+                  <option value="medium" selected>中（均衡）</option>
+                  <option value="high">高（最佳畫面）</option>
+                </select>
+              </div>
+              <div class="settings-row">
+                <span class="quality-hint" id="quality-hint">畫質設置與設備推薦一致</span>
+              </div>
+            </div>
+
+            <!-- 键位设置 -->
+            <div class="settings-section">
+              <h3 class="settings-section-title">鍵位設置</h3>
+              <div class="keybind-grid">
+                <div class="keybind-row">
+                  <label>移動左</label>
+                  <div class="keybind-keys" id="kb-left"></div>
+                </div>
+                <div class="keybind-row">
+                  <label>移動右</label>
+                  <div class="keybind-keys" id="kb-right"></div>
+                </div>
+                <div class="keybind-row">
+                  <label>跳躍</label>
+                  <div class="keybind-keys" id="kb-jump"></div>
+                </div>
+                <div class="keybind-row">
+                  <label>攻撃</label>
+                  <div class="keybind-keys" id="kb-attack"></div>
+                </div>
+                <div class="keybind-row">
+                  <label>術式1</label>
+                  <div class="keybind-keys" id="kb-skill1"></div>
+                </div>
+                <div class="keybind-row">
+                  <label>術式2</label>
+                  <div class="keybind-keys" id="kb-skill2"></div>
+                </div>
+                <div class="keybind-row">
+                  <label>茈</label>
+                  <div class="keybind-keys" id="kb-skill3"></div>
+                </div>
+                <div class="keybind-row">
+                  <label>閃避</label>
+                  <div class="keybind-keys" id="kb-dodge"></div>
+                </div>
+                <div class="keybind-row">
+                  <label>領域</label>
+                  <div class="keybind-keys" id="kb-ultimate"></div>
+                </div>
+              </div>
+              <div class="settings-actions">
+                <button id="settings-reset" class="changelog-btn manga-btn">
+                  <span class="btn-text">恢復預設</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel-speedlines"></div>
+      </div>
+    </div>
+
+    <!-- ========== 图鉴弹窗 ========== -->
+    <div id="encyclopedia-modal" class="encyclopedia-modal hidden">
+      <div class="encyclopedia-overlay"></div>
+      <div class="encyclopedia-panel manga-panel">
+        <div class="panel-inner">
+          <div class="encyclopedia-header">
+            <h2>咒術圖鑑</h2>
+            <button id="encyclopedia-close" class="changelog-close">✕</button>
+          </div>
+          <div class="encyclopedia-nav" id="encyclopedia-nav">
+            <!-- JS 动态填充 -->
+          </div>
+          <div class="encyclopedia-content" id="encyclopedia-content">
+            <!-- JS 动态填充 -->
+          </div>
+        </div>
+        <div class="panel-speedlines"></div>
+      </div>
+    </div>
+
+    <!-- ========== 新手教程弹窗 ========== -->
+    <div id="tutorial-modal" class="tutorial-modal hidden">
+      <div class="tutorial-overlay"></div>
+      <div class="tutorial-panel manga-panel">
+        <div class="panel-inner">
+          <div class="tutorial-header">
+            <span class="tutorial-label">新手指引</span>
+            <span class="tutorial-page" id="tutorial-page">1 / 5</span>
+          </div>
+          <h3 class="tutorial-title" id="tutorial-title">標題</h3>
+          <div class="tutorial-content" id="tutorial-content">內容</div>
+          <div class="tutorial-actions">
+            <button id="tutorial-prev" class="changelog-btn manga-btn tutorial-prev">
+              <span class="btn-text">上一步</span>
+            </button>
+            <button id="tutorial-skip" class="ghost-btn tutorial-skip">
+              <span class="btn-text">跳過</span>
+            </button>
+            <button id="tutorial-next" class="changelog-btn manga-btn tutorial-next">
+              <span class="btn-text">下一步</span>
+            </button>
+          </div>
+        </div>
+        <div class="panel-speedlines"></div>
       </div>
     </div>
 
     <!-- ========== 战斗界面 ========== -->
     <div id="fight-screen" class="screen hidden">
       <canvas id="game-canvas"></canvas>
+
+      <!-- 顶部极简 HUD：血条/咒力条贴顶 -->
+      <!-- 战斗中设置入口 -->
+      <button id="fight-settings-btn" class="fight-settings-btn" title="設定">
+        <span>設</span>
+      </button>
+
+      <div class="hud-top">
+        <!-- 玩家方（左） -->
+        <div class="hud-side hud-left">
+          <div class="hud-nameplate">
+            <span class="hud-name" id="hud-p-name">虎杖悠仁</span>
+            <span class="hud-team" id="hud-p-team">1/3</span>
+          </div>
+          <div class="hud-bars">
+            <div class="hud-bar hud-hp">
+              <div class="hud-bar-fill" id="hud-p-hp"></div>
+              <span class="hud-bar-text" id="hud-p-hp-text">1500</span>
+            </div>
+            <div class="hud-bar hud-ce">
+              <div class="hud-bar-fill" id="hud-p-ce"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 中间：VS + 计时 -->
+        <div class="hud-center">
+          <span class="hud-vs">VS</span>
+          <span class="hud-timer" id="hud-timer">00:00</span>
+        </div>
+
+        <!-- 敌方（右） -->
+        <div class="hud-side hud-right">
+          <div class="hud-bars">
+            <div class="hud-bar hud-hp hud-hp-right">
+              <div class="hud-bar-fill" id="hud-e-hp"></div>
+              <span class="hud-bar-text" id="hud-e-hp-text">1000</span>
+            </div>
+            <div class="hud-bar hud-ce hud-ce-right">
+              <div class="hud-bar-fill" id="hud-e-ce"></div>
+            </div>
+          </div>
+          <div class="hud-nameplate hud-nameplate-right">
+            <span class="hud-team" id="hud-e-team">1/3</span>
+            <span class="hud-name" id="hud-e-name">宿傩</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 黑闪红光闪屏层 -->
+      <div class="black-flash-overlay" id="black-flash-overlay"></div>
+      <!-- 技能释放震屏层 -->
+      <div class="skill-shake-overlay" id="skill-shake-overlay"></div>
+      <!-- 战斗中暂停遮罩 -->
+      <div id="pause-overlay" class="pause-overlay hidden">
+        <div class="pause-content">
+          <div class="pause-title">已暫停</div>
+          <div class="pause-sub">PAUSED</div>
+        </div>
+      </div>
+
       <div id="ready-overlay" class="ready-overlay">
+        <div id="ready-round" class="ready-round"></div>
         <div id="ready-text" class="ready-text">3</div>
       </div>
       <div id="battle-start" class="battle-start">戦闘開始</div>
+
+      <!-- 回合结束总结 -->
+      <div id="round-summary" class="round-summary hidden">
+        <div class="round-summary-content">
+          <div class="round-summary-title" id="round-summary-title">第 1 回戦終了</div>
+          <div class="round-summary-winner" id="round-summary-winner">勝者：五条悟</div>
+          <div class="round-summary-hp" id="round-summary-hp">残り HP：1200 / 1500</div>
+          <div class="round-summary-reason" id="round-summary-reason">K.O.</div>
+        </div>
+      </div>
+
+      <!-- 比赛结束动画 -->
+      <div id="match-end" class="match-end hidden">
+        <div class="match-end-text" id="match-end-text">K.O.</div>
+      </div>
+
       <div class="fight-border manga-panel">
         <div class="fight-border-top"></div>
         <div class="fight-border-bottom"></div>
       </div>
       <div class="controls">
         <div class="controls-left">
-          <button id="btn-left" class="ctrl-btn dir-btn manga-btn">
-            <span class="arrow-left"></span>
+          <div id="joystick" class="joystick manga-btn">
+            <div class="joystick-ring">
+              <div class="joystick-zone joystick-up" data-dir="jump"></div>
+              <div class="joystick-zone joystick-left" data-dir="left"></div>
+              <div class="joystick-center"></div>
+              <div class="joystick-zone joystick-right" data-dir="right"></div>
+              <div class="joystick-zone joystick-down" data-dir="down"></div>
+            </div>
+            <div class="joystick-thumb"></div>
             <span class="btn-mist"></span>
-          </button>
-          <button id="btn-right" class="ctrl-btn dir-btn manga-btn">
-            <span class="arrow-right"></span>
-            <span class="btn-mist"></span>
-          </button>
-          <button id="btn-jump" class="ctrl-btn jump-btn manga-btn">
-            <span class="arrow-up"></span>
-            <span class="btn-mist"></span>
-          </button>
+          </div>
         </div>
         <div class="controls-right">
           <button id="btn-attack" class="ctrl-btn atk-btn manga-btn">
@@ -181,6 +459,12 @@
             <span class="btn-mist"></span>
             <span class="btn-spark"></span>
           </button>
+          <button id="btn-skill4" class="ctrl-btn skill4-btn manga-btn">
+            <span class="skill-name">灶</span>
+            <span class="skill-cd">-</span>
+            <span class="btn-mist"></span>
+            <span class="btn-spark"></span>
+          </button>
           <button id="btn-dodge" class="ctrl-btn dodge-btn manga-btn">
             <span>閃</span>
             <span class="btn-mist"></span>
@@ -191,21 +475,32 @@
             <span class="btn-mist"></span>
             <span class="btn-spark"></span>
           </button>
+          <button id="btn-simple-domain" class="ctrl-btn simple-domain-btn manga-btn">
+            <span class="skill-name">簡易領域</span>
+            <span class="skill-cd">-</span>
+            <span class="btn-mist"></span>
+            <span class="btn-spark"></span>
+          </button>
         </div>
       </div>
       <div class="key-hints manga-panel">
-        <span>WASD 移動</span>
+        <span>🕹 摇杆移動</span>
         <span class="hint-sep">|</span>
         <span>J 攻撃</span>
         <span class="hint-sep">|</span>
-        <span>K/L 術式</span>
+        <span>K/L 術式1/2</span>
         <span class="hint-sep">|</span>
-        <span>O 茈</span>
+        <span>O 術式3</span>
+        <span class="hint-sep">|</span>
+        <span>I 術式4</span>
         <span class="hint-sep">|</span>
         <span>SPACE 閃避</span>
         <span class="hint-sep">|</span>
+        <span>V 簡易領域</span>
+        <span class="hint-sep">|</span>
         <span>U 領域</span>
       </div>
+      <div class="version-number-fight">v1.16.0</div>
     </div>
 
     <!-- ========== 结算界面 ========== -->
@@ -216,7 +511,36 @@
         <div class="manga-panel result-panel">
           <div class="panel-inner">
             <h2 id="result-title" class="result-title"></h2>
-            <div id="result-stats" class="result-stats"></div>
+
+            <!-- 标签切换 -->
+            <div class="result-tabs">
+              <button class="result-tab active" data-tab="current">本局统计</button>
+              <button class="result-tab" data-tab="history">历史战绩</button>
+            </div>
+
+            <!-- 本局统计 -->
+            <div id="result-tab-current" class="result-tab-panel active">
+              <div id="result-stats" class="result-stats"></div>
+            </div>
+
+            <!-- 历史战绩 / 排行榜 -->
+            <div id="result-tab-history" class="result-tab-panel">
+              <div id="leaderboard-stats" class="leaderboard-stats">
+                <!-- JS 动态填充：总场次 / 胜率 / 连胜 -->
+              </div>
+              <div class="leaderboard-list-wrap">
+                <div class="leaderboard-header">
+                  <span>结果</span>
+                  <span>队伍</span>
+                  <span>伤害</span>
+                  <span>时间</span>
+                </div>
+                <div id="leaderboard-list" class="leaderboard-list">
+                  <!-- JS 动态填充最近对战记录 -->
+                </div>
+              </div>
+            </div>
+
             <div class="result-buttons">
               <button id="btn-retry" class="result-btn retry-btn manga-btn">
                 <span class="btn-text">再戦</span>
@@ -244,7 +568,9 @@
   <script src="js/ai.js"></script>
   <script src="js/combat.js"></script>
   <script src="js/canvas.js"></script>
+  <script src="js/quality-advisor.js"></script>
   <script src="js/ui.js"></script>
+  <script src="js/encyclopedia.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>
