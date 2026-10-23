@@ -575,9 +575,13 @@ class UIManager {
         // 在 body 上加 class，让 CSS 能根据模式调整布局
         document.body.classList.toggle('versus-mode', mode === 'versus');
         // 重置选角状态
+        // 双人模式：P1 从空开始选，选满后切 P2
+        // 单人模式：恢复默认队伍
+        this.selectedCharacters = mode === 'versus' ? [] : ['gojo', 'sukuna', 'yuji'];
         this.p2SelectedCharacters = [];
         this.isP2Selecting = false;
         this._updateSelectingState();
+        this.updateSelectionUI();
       });
     });
     // 初始状态也同步 body class
@@ -614,9 +618,15 @@ class UIManager {
     const btnSub = document.getElementById('btn-sub-text');
     if (btnSub) {
       if (typeof GAME_MODE !== 'undefined' && GAME_MODE === 'versus') {
-        btnSub.innerHTML = this.isP2Selecting
-          ? `P2: ${this.p2SelectedCharacters.length}/${this.maxSelect}`
-          : `P1: ${this.selectedCharacters.length}/${this.maxSelect}`;
+        if (this.isP2Selecting) {
+          btnSub.innerHTML = this.p2SelectedCharacters.length >= this.maxSelect
+            ? `双方就绪 · 点击开始`
+            : `P2: ${this.p2SelectedCharacters.length}/${this.maxSelect}`;
+        } else {
+          btnSub.innerHTML = this.selectedCharacters.length >= this.maxSelect
+            ? `P1 完成 · 请选择 P2`
+            : `P1: ${this.selectedCharacters.length}/${this.maxSelect}`;
+        }
       } else {
         btnSub.innerHTML = `SELECT <span id="select-count">${this.selectedCharacters.length}/${this.maxSelect}</span>`;
       }
@@ -656,51 +666,77 @@ class UIManager {
 
         const isVersus = typeof GAME_MODE !== 'undefined' && GAME_MODE === 'versus';
 
-        if (isVersus && this.isP2Selecting) {
+        // ===== 双人模式 =====
+        if (isVersus) {
           // P2 选角阶段
-          const idx = this.p2SelectedCharacters.indexOf(id);
-          if (idx !== -1) {
-            this.p2SelectedCharacters.splice(idx, 1);
-            if (this._audio) this._audio.playError();
-            this.updateSelectionUI();
-            return;
-          }
-          if (this.p2SelectedCharacters.length >= this.maxSelect) {
-            if (this._audio) this._audio.playError();
-            this.flashSelectionHint();
-            return;
-          }
-          this.p2SelectedCharacters.push(id);
-          if (this._audio) this._audio.playSelect();
-          this.updateSelectionUI();
-          // P2 选满后切换回 P1 预览
-          if (this.p2SelectedCharacters.length >= this.maxSelect && this._audio) {
-            this._audio.playSelect();
-          }
-        } else {
-          // P1 选角阶段（或单人模式）
-          const idx = this.selectedCharacters.indexOf(id);
-          if (idx !== -1) {
-            this.selectedCharacters.splice(idx, 1);
-            if (this._audio) this._audio.playError();
-            this.updateSelectionUI();
-            return;
-          }
-          if (this.selectedCharacters.length >= this.maxSelect) {
-            if (this._audio) this._audio.playError();
-            // 双人模式下 P1 选满后自动进入 P2 选角
-            if (isVersus) {
-              this.isP2Selecting = true;
-              this._updateSelectingState();
-            } else {
-              this.flashSelectionHint();
+          if (this.isP2Selecting) {
+            const idx = this.p2SelectedCharacters.indexOf(id);
+            if (idx !== -1) {
+              this.p2SelectedCharacters.splice(idx, 1);
+              if (this._audio) this._audio.playError();
+              this.updateSelectionUI();
+              return;
             }
+            if (this.p2SelectedCharacters.length >= this.maxSelect) {
+              if (this._audio) this._audio.playError();
+              this.flashSelectionHint();
+              return;
+            }
+            this.p2SelectedCharacters.push(id);
+            if (this._audio) this._audio.playSelect();
+            this.updateSelectionUI();
+            return;
+          }
+
+          // P1 选角阶段
+          // 如果 P1 已满，说明该切到 P2 了 —— 这次点击直接算作 P2 的第一个选择
+          if (this.selectedCharacters.length >= this.maxSelect) {
+            this.isP2Selecting = true;
+            this._updateSelectingState();
+            // 递归处理：以 P2 阶段的身份处理这次点击
+            const idx = this.p2SelectedCharacters.indexOf(id);
+            if (idx === -1 && this.p2SelectedCharacters.length < this.maxSelect) {
+              this.p2SelectedCharacters.push(id);
+              if (this._audio) this._audio.playSelect();
+              this.updateSelectionUI();
+            }
+            return;
+          }
+          // P1 未满：正常加入 P1
+          const p1Idx = this.selectedCharacters.indexOf(id);
+          if (p1Idx !== -1) {
+            this.selectedCharacters.splice(p1Idx, 1);
+            if (this._audio) this._audio.playError();
+            this.updateSelectionUI();
             return;
           }
           this.selectedCharacters.push(id);
           if (this._audio) this._audio.playSelect();
           this.updateSelectionUI();
+          // 选满后自动进入 P2 选角阶段
+          if (this.selectedCharacters.length >= this.maxSelect) {
+            this.isP2Selecting = true;
+            this._updateSelectingState();
+          }
+          return;
         }
+
+        // ===== 单人模式 =====
+        const idx = this.selectedCharacters.indexOf(id);
+        if (idx !== -1) {
+          this.selectedCharacters.splice(idx, 1);
+          if (this._audio) this._audio.playError();
+          this.updateSelectionUI();
+          return;
+        }
+        if (this.selectedCharacters.length >= this.maxSelect) {
+          if (this._audio) this._audio.playError();
+          this.flashSelectionHint();
+          return;
+        }
+        this.selectedCharacters.push(id);
+        if (this._audio) this._audio.playSelect();
+        this.updateSelectionUI();
       });
 
       strip.appendChild(thumb);
@@ -738,7 +774,10 @@ class UIManager {
     }
 
     // 默认队伍
-    this.selectedCharacters = ['gojo', 'sukuna', 'yuji'];
+    // 单人模式：预填默认队伍，方便直接开打
+    // 双人模式：P1 初始为空，让用户从空开始选，选满 3 人后自动切 P2
+    const isVersus = typeof GAME_MODE !== 'undefined' && GAME_MODE === 'versus';
+    this.selectedCharacters = isVersus ? [] : ['gojo', 'sukuna', 'yuji'];
     this.p2SelectedCharacters = [];
     this.isP2Selecting = false;
     this._updateSelectingState();
